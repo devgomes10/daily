@@ -1,3 +1,5 @@
+import 'package:daily/models/journal.dart';
+import 'package:daily/screens/add_journal_screen/add_journal_screen.dart';
 import 'package:daily/services/journal_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,13 +8,14 @@ import 'screens/home_screen/home_screen.dart';
 void main() {
   runApp(const MyApp());
 
-  JournalService service = JournalService();
-  service.register("hello, world");
+  // JournalService service = JournalService();
+  // service.register("hello, world");
   // service.get();
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,12 +31,24 @@ class MyApp extends StatelessWidget {
           titleTextStyle: TextStyle(
             color: Colors.white,
           ),
+          actionsIconTheme: IconThemeData(color: Colors.white),
+          iconTheme: IconThemeData(color: Colors.white),
         ),
         textTheme: GoogleFonts.bitterTextTheme(),
       ),
       initialRoute: "home",
       routes: {
         "home": (context) => const HomeScreen(),
+      },
+      onGenerateRoute: (setting) {
+        if (setting.name == 'add-journal') {
+          final Journal journal = setting.arguments as Journal;
+          return MaterialPageRoute(
+            builder: (context) {
+              return AddJournalScreen(journal: journal);
+            },
+          );
+        }
       },
     );
   }
