@@ -1,6 +1,6 @@
 import 'package:daily/screens/home_screen/widgets/home_screen_list.dart';
+import 'package:daily/services/journal_service.dart';
 import 'package:flutter/material.dart';
-import '../../database/database.dart';
 import '../../models/journal.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -22,6 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final ScrollController _listScrollController = ScrollController();
 
+  JournalService service = JournalService();
+
   @override
   void initState() {
     refresh();
@@ -36,6 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text(
           "${currentDay.day}  |  ${currentDay.month}  |  ${currentDay.year}",
         ),
+        actions: [IconButton(onPressed: () {
+          refresh();
+        }, icon: const Icon(Icons.refresh))],
       ),
       body: ListView(
         controller: _listScrollController,
@@ -43,14 +48,19 @@ class _HomeScreenState extends State<HomeScreen> {
           windowPage: windowPage,
           currentDay: currentDay,
           database: database,
+          refreshFunction: refresh,
         ),
       ),
     );
   }
 
-  void refresh() {
+  void refresh() async{
+    List<Journal> journalList = await service.getAll();
     setState(() {
-      database = generateRandomDatabase(maxGap: windowPage, amount: 3);
+      database = {};
+      for (Journal journal in journalList) {
+        database[journal.id] = journal;
+      }
     });
   }
 }
